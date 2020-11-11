@@ -68,3 +68,4 @@ asciidoc:
     url-python: https://www.python.org
   extensions:
     - ./lib/tabs-block.js
+    - ./lib/html-element-macro-block.js
