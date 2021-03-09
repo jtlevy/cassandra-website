@@ -21,7 +21,7 @@ setup_git_user() {
 
 generate_cassandra_versioned_docs() {
   local commit_changes_to_branch=""
-  if [ $(echo "${CASSANDRA_VERSIONS}" | wc -w) -gt 1 ] || [ "${CREATE_GIT_COMMIT_WHEN_GENERATING_DOCS}" = "enabled" ]
+  if [ $(echo "${CASSANDRA_VERSIONS}" | wc -w) -gt 1 ] || [ "${GENERATE_DOCS_COMMIT_CHANGES_TO_LOCAL}" = "enabled" ]
   then
     commit_changes_to_branch="enabled"
   else
@@ -183,14 +183,14 @@ run_preview_mode() {
   echo "Entering preview mode!"
 
   local find_paths="${CASSANDRA_WEBSITE_DIR}/${CASSANDRA_WEBSITE_START_PATH}"
-  if [ "${GENERATE_DOCS}" = "enabled" ]
+  if [ "${CMD_GENERATE_DOCS}" = "run" ]
   then
     find_paths="${find_paths} ${CASSANDRA_DIR}/${CASSANDRA_START_PATH}"
     # Ensure we only have one branch to generate docs for
     CASSANDRA_VERSIONS=$(echo "${CASSANDRA_VERSIONS} "| cut -d' ' -f1)
   fi
 
-  if [ "${BUILD_SITE}" != "enabled" ]
+  if [ "${CMD_BUILD_SITE}" != "run" ]
   then
     generate_site_yaml
 
@@ -215,13 +215,13 @@ run_preview_mode() {
 #
 # ----- Main -----
 #
-if [ "${GENERATE_DOCS}" = "enabled" ]
+if [ "${CMD_GENERATE_DOCS}" = "run" ]
 then
   setup_git_user
   generate_cassandra_versioned_docs
 fi
 
-if [ "${BUILD_SITE}" = "enabled" ]
+if [ "${CMD_BUILD_SITE}" = "run" ]
 then
   generate_site_yaml
 
@@ -233,7 +233,7 @@ then
   render_site_content_to_html
 fi
 
-if [ "${PREVIEW_MODE}" = "enabled" ]
+if [ "${CMD_PREVIEW}" = "run" ]
 then
   run_preview_mode
 fi

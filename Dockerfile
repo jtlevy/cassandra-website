@@ -106,10 +106,11 @@ ENV CASSANDRA_WEBSITE_START_PATH="site-content/source"
 ENV UI_BUNDLE_ZIP_URL="https://github.com/ianjevans/antora-ui-datastax/releases/download/v0.1oss/ui-bundle.zip"
 ENV CASSANDRA_DOWNLOADS_URL="https://downloads.apache.org/cassandra/"
 
-ENV GENERATE_DOCS="enabled"
-ENV BUILD_SITE="enabled"
-ENV PREVIEW_MODE="disabled"
-ENV CREATE_GIT_COMMIT_WHEN_GENERATING_DOCS="enabled"
+ENV CMD_GENERATE_DOCS="run"
+ENV CMD_BUILD_SITE="run"
+ENV CMD_PREVIEW=""
+
+ENV GENERATE_DOCS_COMMIT_CHANGES_TO_LOCAL="enabled"
 
 EXPOSE 5151/tcp
 
