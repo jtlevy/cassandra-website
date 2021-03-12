@@ -141,10 +141,10 @@ generate_site_yaml() {
   local content_source_options=()
   for repo in CASSANDRA CASSANDRA_WEBSITE
   do
-    repository_url=$(eval echo "$"${repo}_REPOSITORY_URL"")
-    start_path=$(eval echo "$"${repo}_START_PATH"")
-    branches=$(eval echo "$"${repo}_VERSIONS"")
-    tags=$(eval echo "$"${repo}_TAGS"")
+    repository_url=$(eval echo "$"ANTORA_CONTENT_SOURCES_${repo}_URL"")
+    start_path=$(eval echo "$"ANTORA_CONTENT_SOURCES_${repo}_START_PATH"")
+    branches=$(eval echo "$"ANTORA_CONTENT_SOURCES_${repo}_BRANCHES"")
+    tags=$(eval echo "$"ANTORA_CONTENT_SOURCES_${repo}_TAGS"")
 
     if [ -n "${repository_url}" ] && [ -n "${start_path}" ] && { [ -n "${branches}" ] || [ -n "${tags}" ]; }
     then
@@ -161,11 +161,11 @@ generate_site_yaml() {
   rm -f site.yaml
   python3 ./bin/site_yaml_generator.py \
     -s "$(generate_json \
-          "string:title:${SITE_TITLE}" \
-          "string:url:${SITE_URL}" \
-          "string:start_page:${SITE_START_PAGE}") "\
+          "string:title:${ANTORA_SITE_TITLE}" \
+          "string:url:${ANTORA_SITE_URL}" \
+          "string:start_page:${ANTORA_SITE_START_PAGE}") "\
     "${content_source_options[@]}" \
-    -u "${UI_BUNDLE_ZIP_URL}" \
+    -u "${ANTORA_UI_BUNDLE_URL}" \
     -r "${CASSANDRA_DOWNLOADS_URL}" \
     site.template.yaml
   popd > /dev/null
@@ -183,14 +183,14 @@ run_preview_mode() {
   echo "Entering preview mode!"
 
   local find_paths="${CASSANDRA_WEBSITE_DIR}/${CASSANDRA_WEBSITE_START_PATH}"
-  if [ "${GENERATE_DOCS}" = "enabled" ]
+  if [ "${COMMAND_GENERATE_DOCS}" = "enabled" ]
   then
     find_paths="${find_paths} ${CASSANDRA_DIR}/${CASSANDRA_START_PATH}"
     # Ensure we only have one branch to generate docs for
     CASSANDRA_VERSIONS=$(echo "${CASSANDRA_VERSIONS} "| cut -d' ' -f1)
   fi
 
-  if [ "${BUILD_SITE}" != "enabled" ]
+  if [ "${COMMAND_BUILD_SITE}" != "enabled" ]
   then
     generate_site_yaml
 
@@ -212,13 +212,13 @@ run_preview_mode() {
     entr /bin/bash -c "render_site_content_to_html"
 }
 
-if [ "${GENERATE_DOCS}" = "enabled" ]
+if [ "${COMMAND_GENERATE_DOCS}" = "enabled" ]
 then
   setup_git_user
   generate_cassandra_versioned_docs
 fi
 
-if [ "${BUILD_SITE}" = "enabled" ]
+if [ "${COMMAND_BUILD_SITE}" = "enabled" ]
 then
   generate_site_yaml
 
@@ -230,7 +230,7 @@ then
   render_site_content_to_html
 fi
 
-if [ "${PREVIEW_MODE}" = "enabled" ]
+if [ "${COMMAND_PREVIEW}" = "enabled" ]
 then
   run_preview_mode
 fi
